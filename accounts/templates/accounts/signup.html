@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+{% block content %}
+    {% include "navbar.html" %}
+
+    <main class="max-w-md mx-auto px-4 pt-16 pb-20 h-[calc(100vh-65px)]">
+        <section class="rounded-3xl border border-white/10 bg-black/20 p-7">
+            <div class="kicker text-xs text-[var(--accent)]/80">Conta</div>
+            <h1 class="mt-2 font-display uppercase text-3xl">Criar Conta</h1>
+
+            <form method="post" class="mt-6 space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="text-sm text-white/70 mb-2 block">Email</label>
+                    <input name="email" type="email" required
+                           class="w-full rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white">
+                    {{ form.email.errors }}
+                </div>
+
+                <div>
+                    <label class="text-sm text-white/70 mb-2 block">Password</label>
+                    <input name="password1" type="password" required
+                           class="w-full rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white">
+                    {{ form.password1.errors }}
+                </div>
+
+                <div>
+                    <label class="text-sm text-white/70 mb-2 block">Confirmar Password</label>
+                    <input name="password2" type="password" required
+                           class="w-full rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white">
+                    {{ form.password2.errors }}
+                </div>
+
+                <button class="w-full rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition">
+                    Criar conta
+                </button>
+
+                <p class="text-center text-sm text-white/60">
+                    Já tens conta?
+                    <a href="{% url 'accounts:login' %}" class="text-white underline">Entrar</a>
+                </p>
+            </form>
+        </section>
+    </main>
+
+{% endblock %}

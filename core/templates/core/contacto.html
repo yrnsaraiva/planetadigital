@@ -1,0 +1,162 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+        <div class="kicker text-xs text-[var(--accent)]/80">Fale connosco</div>
+        <h1 class="mt-2 font-display uppercase text-6xl leading-[0.85]">Contacto</h1>
+
+        <div class="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <section
+                    class="lg:col-span-7 rounded-3xl border border-white/10 glass p-7 noise relative overflow-hidden reveal">
+                <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full blur-3xl bg-violet-500/18"></div>
+
+                <div class="kicker text-[10px] text-[var(--accent)]/80">Form</div>
+
+                <form class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3" id="contactForm">
+                    <input
+                            class="rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white/90 outline-none focus:border-white/30"
+                            name="name"
+                            placeholder="Nome"
+                            required
+                    />
+                    <input
+                            class="rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white/90 outline-none focus:border-white/30"
+                            name="phone"
+                            placeholder="WhatsApp (+258...)"
+                            required
+                    />
+                    <input
+                            class="md:col-span-2 rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white/90 outline-none focus:border-white/30"
+                            name="subject"
+                            placeholder="Assunto"
+                            required
+                    />
+                    <textarea
+                            class="md:col-span-2 rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white/90 outline-none focus:border-white/30"
+                            name="message"
+                            placeholder="Mensagem"
+                            required
+                            rows="4"
+                    ></textarea>
+
+                    <button
+                            class="md:col-span-2 rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition"
+                            type="submit"
+                            id="submitBtn"
+                    >
+                        Enviar no WhatsApp
+                    </button>
+
+                    <!-- opcional: fallback link pronto (será preenchido via JS) -->
+                    <a
+                            class="md:col-span-2 text-center text-xs text-white/50 hover:text-white/70 transition"
+                            id="waFallback"
+                            href="https://wa.me/258878750526"
+                            target="_blank"
+                            rel="noopener"
+                    >
+                        Abrir WhatsApp manualmente
+                    </a>
+                </form>
+            </section>
+
+            <aside class="lg:col-span-5 rounded-3xl border border-white/10 glass p-7 noise relative overflow-hidden reveal">
+                <div class="absolute -bottom-24 -left-24 h-64 w-64 rounded-full blur-3xl bg-cyan-400/14"></div>
+                <div class="kicker text-[10px] text-[var(--accent)]/80">Info</div>
+
+                <div class="mt-4 text-sm text-white/70 leading-relaxed">
+                    <div class="font-display uppercase text-2xl leading-[0.9]">PLANETA</div>
+                    <div class="mt-3 text-xs text-white/55">Cultura · Música · Experiência</div>
+
+                    <div class="mt-6 text-xs text-white/55">Levantamento Merch</div>
+                    <div class="mt-1 font-monoish text-sm text-white/80">Triunfo, Maputo</div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    {% include 'footer.html' %}
+
+    <script>
+        (function () {
+            const form = document.getElementById("contactForm");
+            const submitBtn = document.getElementById("submitBtn");
+            const waFallback = document.getElementById("waFallback");
+
+            // Número de destino no formato internacional SEM "+" (você já tem 258...)
+            const WA_NUMBER = "258878750526";
+
+            function buildWhatsAppText({name, phone, subject, message}) {
+                // Use \n para quebras de linha (WhatsApp entende bem)
+                return [
+                    "*Novo contacto - PLANETA*",
+                    "",
+                    `Nome: ${name}`,
+                    `WhatsApp: ${phone}`,
+                    `Assunto: ${subject}`,
+                    "",
+                    `${message}`,
+
+                ].join("\n");
+            }
+
+            function buildWaLink(text) {
+                return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+            }
+
+            // Atualiza o link fallback enquanto o user digita (opcional, mas útil)
+            function syncFallbackLink() {
+                const fd = new FormData(form);
+                const payload = {
+                    name: (fd.get("name") || "").toString().trim(),
+                    phone: (fd.get("phone") || "").toString().trim(),
+                    subject: (fd.get("subject") || "").toString().trim(),
+                    message: (fd.get("message") || "").toString().trim(),
+                };
+
+                // Só monta se tiver algo (evita link enorme vazio)
+                const hasAny = payload.name || payload.phone || payload.subject || payload.message;
+                if (!hasAny) {
+                    waFallback.href = `https://wa.me/${WA_NUMBER}`;
+                    return;
+                }
+
+                const text = buildWhatsAppText(payload);
+                waFallback.href = buildWaLink(text);
+            }
+
+            form.addEventListener("input", syncFallbackLink);
+
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const fd = new FormData(form);
+                const payload = {
+                    name: fd.get("name").toString().trim(),
+                    phone: fd.get("phone").toString().trim(),
+                    subject: fd.get("subject").toString().trim(),
+                    message: fd.get("message").toString().trim(),
+                };
+
+                const text = buildWhatsAppText(payload);
+                const link = buildWaLink(text);
+
+                // Pequeno UX: evita duplo clique
+                submitBtn.disabled = true;
+                submitBtn.classList.add("opacity-80", "cursor-not-allowed");
+
+                // Abre na mesma aba (mais "submit-like"). Se preferir nova aba: window.open(link, "_blank")
+                window.location.href = link;
+
+                // (não reativamos o botão porque a página vai navegar)
+            });
+
+            // inicializa o fallback
+            syncFallbackLink();
+        })();
+    </script>
+
+{% endblock %}

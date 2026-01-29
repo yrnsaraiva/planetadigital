@@ -1,0 +1,96 @@
+{% load static %}
+<!-- FOOTER -->
+<footer class="mt-20 border-t border-white/10 noise relative">
+    <div class="max-w-6xl mx-auto px-4 py-12">
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+
+            <!-- BRAND / STATEMENT -->
+            <div class="md:col-span-4">
+                <img alt="PLANETA" class="w-20 opacity-90" src="{% static 'img/Planeta-Handwriting.svg' %}">
+                <p class="mt-4 text-sm text-white/60 leading-relaxed max-w-sm">
+                    Cultura, música e juventude em órbita.
+                    PLANETA é experiência - física e digital.
+                </p>
+            </div>
+
+            <!-- CONTACTOS -->
+            <div class="md:col-span-3">
+                <div class="kicker text-xs text-[var(--accent)]/80">Contactos</div>
+                <ul class="mt-4 space-y-2 text-sm text-white/65">
+                    <li>Maputo · Triunfo</li>
+                    <li>
+                        <a class="hover:text-white transition link-u" href="https://wa.me/258871002580"
+                           target="_blank">
+                            WhatsApp: +258 87 100 2580
+                        </a>
+                    </li>
+                    <li>
+                        <a class="hover:text-white transition link-u"
+                           href="mailto:hello@planeta.world">
+                            hello@planeta.world
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- REDES SOCIAIS -->
+            <div class="md:col-span-2">
+                <div class="kicker text-xs text-[var(--accent)]/80">Redes</div>
+                <ul class="mt-4 space-y-2 text-sm">
+                    <li>
+                        <a class="text-white/65 hover:text-white transition link-u"
+                           href="https://instagram.com/foradesteplaneta"
+                           target="_blank">
+                            Instagram
+                        </a>
+                    </li>
+                    <li>
+                        <a class="text-white/65 hover:text-white transition link-u" href="#">
+                            TikTok
+                        </a>
+                    </li>
+                    <li>
+                        <a class="text-white/65 hover:text-white transition link-u" href="#">
+                            YouTube
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- NEWSLETTER -->
+            <div class="md:col-span-3">
+                <div class="kicker text-xs text-[var(--accent)]/80">Newsletter</div>
+                <p class="mt-4 text-sm text-white/60">
+                    Drops, eventos e arquivos culturais.
+                    Sem spam. Só presença.
+                </p>
+
+                <form id="footerNlForm" class="mt-4 flex gap-2">
+                    <input id="footerNlEmail"
+                           class="flex-1 rounded-full bg-black/40 border border-white/15 px-4 py-2 text-sm text-white/90 outline-none focus:border-white/30"
+                           placeholder="teu@email.com" required type="email"/>
+                    <button class="rounded-full px-4 py-2 bg-white text-black text-sm font-bold hover:bg-white/90 transition"
+                            type="submit">
+                        Entrar
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- BOTTOM BAR -->
+        <div class="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[10px] kicker text-white/45">
+            <div>
+                © <span id="year">2026</span> <span data-brand>PLANETA</span> - Todos os direitos reservados.
+            </div>
+{#            <div class="flex gap-4">#}
+{#                <a class="hover:text-white transition" href="events.html">Eventos</a>#}
+{#                <a class="hover:text-white transition" href="merch.html">Merch</a>#}
+{#                <a class="hover:text-white transition" href="contacto.html">Contacto</a>#}
+{#            </div>#}
+        </div>
+
+    </div>
+</footer>

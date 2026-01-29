@@ -1,0 +1,207 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+    {% include "navbar.html" %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-8 pb-16">
+
+        <!-- BREADCRUMB -->
+        <nav class="text-[11px] kicker text-white/45 mb-6 flex items-center gap-2">
+            <a href="{% url 'campaigns:list_campaigns' %}" class="hover:text-white transition">
+                Campanhas
+            </a>
+            <span class="text-white/20">/</span>
+            <span class="text-white/70 truncate">{{ campaign.title }}</span>
+        </nav>
+
+        <!-- HERO / COVER -->
+        <section class="relative overflow-hidden border border-white/10 reveal">
+            <div class="relative h-[320px] md:h-[440px]">
+                {% if campaign.cover_image %}
+                    <img
+                            src="{{ campaign.cover_image.url }}"
+                            alt="{{ campaign.title }}"
+                            class="absolute inset-0 w-full h-full object-cover opacity-95"
+                    >
+                {% else %}
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-black/40 to-[var(--accent)]/10"></div>
+                {% endif %}
+
+                <!-- overlays -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10"></div>
+                <div class="absolute inset-0 ring-1 ring-inset ring-white/10"></div>
+
+                <!-- content on hero -->
+                <div class="absolute inset-x-0 bottom-0 p-6 md:p-10">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="text-[10px] kicker uppercase tracking-wider px-3 py-1 rounded-full border border-white/15 bg-black/30 text-white/75">
+              Campanha
+            </span>
+
+                        {% if campaign.status == 'active' %}
+                            <span class="text-[10px] kicker uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 text-emerald-200">
+                Ativa
+              </span>
+                        {% else %}
+                            <span class="text-[10px] kicker uppercase tracking-wider px-3 py-1 rounded-full border border-white/15 bg-white/5 text-white/60">
+                {{ campaign.get_status_display|default:"Finalizada" }}
+              </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="font-display text-3xl md:text-5xl uppercase leading-[0.9]">
+                        {{ campaign.title }}
+                    </h1>
+
+                    <!-- META CHIPS -->
+                    <div class="mt-5 flex flex-wrap gap-2 text-sm">
+                        <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-4 py-2 text-white/70">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Início: {{ campaign.start_date|date:"d/m/Y" }}</span>
+                        </div>
+
+                        {% if campaign.end_date %}
+                            <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-4 py-2 text-white/70">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Término: {{ campaign.end_date|date:"d/m/Y" }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BODY GRID -->
+        <section class="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- MAIN CONTENT -->
+            <div class="lg:col-span-8 reveal">
+                <div class="rounded-3xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+                    <div class="text-[10px] kicker text-white/45 uppercase tracking-wider mb-3">
+                        Sobre a campanha
+                    </div>
+
+                    <article class="prose prose-invert max-w-none">
+                        <div class="text-white/70 text-base leading-relaxed space-y-6">
+                            {{ campaign.description|linebreaks }}
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- SIDE / CTA -->
+            <aside class="lg:col-span-4 reveal">
+                <div class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-black/30 p-6 md:p-7">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="text-[10px] kicker text-white/45 uppercase tracking-wider">
+                            Contribuir
+                        </div>
+                        <div class="text-xs text-white/50">
+                            {% if campaign.status == 'active' %}
+                                Aceitando contribuições
+                            {% else %}
+                                Campanha encerrada
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-xl uppercase mt-3">
+                        {% if campaign.call_to_action %}
+                            {{ campaign.call_to_action }}
+                        {% else %}
+                            Faça parte do impacto
+                        {% endif %}
+                    </h3>
+
+                    <p class="text-white/60 text-sm mt-3 leading-relaxed">
+                        Se quiser apoiar, fale connosco por WhatsApp ou Email. Respondemos rápido.
+                    </p>
+
+                    <div class="mt-6 flex flex-col gap-3">
+                        {% if campaign.status == 'active' %}
+                            <a
+                                    href="https://wa.me/258878750526?text=Olá, gostaria de contribuir para a campanha '{{ campaign.title }}'"
+                                    target="_blank"
+                                    class="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 bg-white text-black font-bold hover:bg-white/90 transition shadow-glow"
+                            >
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.226 1.36.194 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.76.982.998-3.675-.236-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.9 6.994c-.004 5.45-4.438 9.88-9.888 9.88m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411"/>
+                                </svg>
+                                WhatsApp
+                            </a>
+                        {% endif %}
+
+                        <a
+                                href="mailto:impacto@planeta.co.mz?subject=Contribuição para '{{ campaign.title }}'"
+                                class="inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 border border-white/15 bg-transparent text-white font-bold hover:bg-white/10 transition"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            Email
+                        </a>
+                    </div>
+
+                    {% if campaign.status != 'active' %}
+                        <div class="mt-5 text-xs text-white/50 border-t border-white/10 pt-4">
+                            Esta campanha não está ativa no momento. Se quiser apoiar iniciativas futuras, envie-nos uma
+                            mensagem.
+                        </div>
+                    {% endif %}
+                </div>
+            </aside>
+        </section>
+
+        <!-- NAVIGATION -->
+        <div class="mt-12 pt-8 border-t border-white/10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% if previous_campaign %}
+                    <a href="{% url 'campaigns:campaign_detail' previous_campaign.slug %}"
+                       class="group rounded-3xl border border-white/10 bg-white/[0.03] p-5 hover:bg-white/[0.06] transition flex items-center gap-4">
+                        <div class="shrink-0 rounded-2xl border border-white/10 bg-black/30 p-3">
+                            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition" fill="none"
+                                 stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-[10px] kicker text-white/45 uppercase tracking-wider">Anterior</div>
+                            <div class="text-sm text-white/80 truncate">{{ previous_campaign.title }}</div>
+                        </div>
+                    </a>
+                {% else %}
+                    <div class="hidden md:block"></div>
+                {% endif %}
+
+                {% if next_campaign %}
+                    <a href="{% url 'campaigns:campaign_detail' next_campaign.slug %}"
+                       class="group rounded-3xl border border-white/10 bg-white/[0.03] p-5 hover:bg-white/[0.06] transition flex items-center justify-between gap-4">
+                        <div class="min-w-0 text-right">
+                            <div class="text-[10px] kicker text-white/45 uppercase tracking-wider">Próxima</div>
+                            <div class="text-sm text-white/80 truncate">{{ next_campaign.title }}</div>
+                        </div>
+                        <div class="shrink-0 rounded-2xl border border-white/10 bg-black/30 p-3">
+                            <svg class="w-5 h-5 transform group-hover:translate-x-1 transition" fill="none"
+                                 stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+    </main>
+
+    {% include "footer.html" %}
+{% endblock %}

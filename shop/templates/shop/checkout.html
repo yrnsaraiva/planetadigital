@@ -1,0 +1,478 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <div class="bg-white">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-8">
+                <a href="{% url 'shop:cart_detail' %}"
+                   class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Voltar ao carrinho
+                </a>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-500">Logado como</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+          {{ request.user.email }}
+        </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- LEFT: FORM -->
+                <div class="lg:col-span-7">
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-6">Finalizar reserva</h1>
+
+                    <form method="post" action="{% url 'shop:create_order' %}" id="checkoutForm" class="space-y-8">
+                        {% csrf_token %}
+
+                        <!-- DELIVERY (Ship / Pickup) -->
+                        <section class="border border-gray-200 rounded-2xl p-5">
+                            <h2 class="text-base font-semibold text-gray-900 mb-4">Entrega</h2>
+
+                            <div class="space-y-3">
+                                <label class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                    <input type="radio" name="delivery_type" value="ship" class="mt-1" checked>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">Entrega (Ship)</div>
+                                        <div class="text-sm text-gray-600">Receba no seu endereço</div>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                    <input type="radio" name="delivery_type" value="pickup" class="mt-1">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">Levantamento (Pick up)</div>
+                                        <div class="text-sm text-gray-600">Retire na loja / ponto de recolha</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Address block (only for ship) -->
+                            <div id="shipAddressBlock" class="mt-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-sm font-semibold text-gray-900">Endereço de entrega</h3>
+                                    {% if addresses %}
+                                        <span class="text-xs text-gray-500">Ou selecione um salvo</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if addresses %}
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                        {% for address in addresses %}
+                                            <label class="cursor-pointer">
+                                                <input type="radio" class="sr-only peer" name="selected_address"
+                                                       value="{{ address.id }}"
+                                                       {% if address.is_default %}checked{% endif %}>
+                                                <div class="p-4 rounded-xl border border-gray-200 peer-checked:border-gray-900 peer-checked:ring-2 peer-checked:ring-gray-900/10 hover:bg-gray-50">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div>
+                                                            <div class="text-sm font-semibold text-gray-900">
+                                                                {{ address.get_full_name }}
+                                                                {% if address.is_default %}
+                                                                    <span class="ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">Principal</span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="text-sm text-gray-600 mt-1">
+                                                                {{ address.street_address }}<br>
+                                                                {{ address.city }}{% if address.postal_code %},
+                                                                    {{ address.postal_code }}{% endif %}<br>
+                                                                {{ address.country }}
+                                                            </div>
+                                                        </div>
+                                                        <svg class="w-5 h-5 text-gray-900 opacity-0 peer-checked:opacity-100"
+                                                             viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                  clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+                                        <div class="h-px flex-1 bg-gray-200"></div>
+                                        OU NOVO ENDEREÇO
+                                        <div class="h-px flex-1 bg-gray-200"></div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Primeiro nome
+                                            *</label>
+                                        <input type="text" name="first_name"
+                                               class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                                               placeholder="Yuran">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Apelido *</label>
+                                        <input type="text" name="last_name"
+                                               class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                                               placeholder="Saraiva">
+                                    </div>
+
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Morada *</label>
+                                        <input type="text" name="street_address"
+                                               class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                                               placeholder="Av. de Namaacha, ...">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Cidade *</label>
+                                        <input type="text" name="city"
+                                               class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                                               placeholder="Matola">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Código
+                                            postal</label>
+                                        <input type="text" name="postal_code"
+                                               class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-900/10"
+                                               placeholder="1100">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Pickup block (only for pickup) -->
+                            <div id="pickupBlock" class="mt-6 hidden">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-3">Ponto de levantamento</h3>
+
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Selecione o ponto
+                                            *</label>
+                                        <select name="pickup_location"
+                                                class="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10">
+                                            <option value="">Selecione...</option>
+                                            <option value="loja_matola">Loja Matola</option>
+                                            <option value="loja_maputo">Loja Maputo</option>
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-2">Vamos avisar quando estiver pronto para
+                                            retirada.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- SHIPPING METHOD -->
+                        <section class="border border-gray-200 rounded-2xl p-5" id="shippingSection">
+                            <h2 class="text-base font-semibold text-gray-900 mb-4">Método de envio</h2>
+
+                            <div class="space-y-3">
+                                {% if shipping_methods %}
+                                    {% for m in shipping_methods %}
+                                        <label class="flex items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                            <div class="flex items-center gap-3">
+                                                <input type="radio" name="shipping_method" value="{{ m.code }}"
+                                                       {% if forloop.first %}checked{% endif %}>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">{{ m.label }}</div>
+                                                    {% if m.description %}
+                                                        <div class="text-xs text-gray-500">{{ m.description }}</div>{% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="text-sm font-semibold text-gray-900">
+                                                {% if m.price == 0 %}FREE{% else %}{{ m.price }} MZN{% endif %}
+                                            </div>
+                                        </label>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Fallback (igual ao exemplo do screenshot) -->
+                                    <label class="flex items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="shipping_method" value="pickup_store" checked>
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">Levantamento na loja
+                                                </div>
+                                                <div class="text-xs text-gray-500">Sem custos</div>
+                                            </div>
+                                        </div>
+                                        <div class="text-sm font-semibold text-gray-900">FREE</div>
+                                    </label>
+
+                                    <label class="flex items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="shipping_method" value="maputo">
+                                            <div class="text-sm font-medium text-gray-900">Maputo</div>
+                                        </div>
+                                        <div class="text-sm font-semibold text-gray-900">MZN 250.00</div>
+                                    </label>
+
+                                    <label class="flex items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="shipping_method" value="local_delivery">
+                                            <div class="text-sm font-medium text-gray-900">Local delivery</div>
+                                        </div>
+                                        <div class="text-sm font-semibold text-gray-900">MZN 250.00</div>
+                                    </label>
+
+                                    <label class="flex items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="shipping_method" value="matola">
+                                            <div class="text-sm font-medium text-gray-900">Matola e arredores</div>
+                                        </div>
+                                        <div class="text-sm font-semibold text-gray-900">MZN 400.00</div>
+                                    </label>
+
+                                    <label class="flex items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="shipping_method" value="other_provinces">
+                                            <div class="text-sm font-medium text-gray-900">Outras províncias</div>
+                                        </div>
+                                        <div class="text-sm font-semibold text-gray-900">MZN 1,000.00</div>
+                                    </label>
+                                {% endif %}
+                            </div>
+                        </section>
+
+                        <!-- PAYMENT (COD ONLY) -->
+                        <section class="border border-gray-200 rounded-2xl p-5">
+                            <h2 class="text-base font-semibold text-gray-900 mb-3">
+                                Pagamento
+                            </h2>
+
+                            <p class="text-sm text-gray-600 mb-4">
+                                O pagamento será efetuado no momento da entrega ou levantamento.
+                            </p>
+
+                            <!-- Método fixo -->
+                            <div class="flex items-start gap-3 p-4 rounded-xl border border-gray-900 bg-gray-50">
+                                <input type="hidden" name="payment_method" value="cod">
+
+                                <svg class="w-5 h-5 text-gray-900 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2H4z"/>
+                                    <path fill-rule="evenodd"
+                                          d="M18 10H2v4a2 2 0 002 2h12a2 2 0 002-2v-4zm-4 3a1 1 0 11-2 0 1 1 0 012 0z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        Cash on Delivery (COD)
+                                    </div>
+                                    <div class="text-xs text-gray-600 mt-1">
+                                        Pagamento em numerário, POS ou M-Pesa no ato da entrega
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 text-xs text-gray-500">
+                                Não é necessário pagamento online. O valor total será cobrado quando receber o produto.
+                            </div>
+                        </section>
+
+                        <!-- SUBMIT -->
+                        <div class="pt-2">
+                            <button
+                                    type="submit"
+                                    id="submitBtn"
+                                    class="w-full rounded-2xl bg-gray-900 text-white font-semibold py-4 hover:bg-gray-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                Finalizar pedido
+                            </button>
+
+                            <p class="text-xs text-gray-500 mt-3">
+                                Ao finalizar, você concorda com os termos e condições e política de privacidade.
+                            </p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- RIGHT: SUMMARY -->
+                <aside class="lg:col-span-5">
+                    <div class="lg:sticky lg:top-6 space-y-4">
+                        <div class="border border-gray-200 rounded-2xl p-5">
+                            <h2 class="text-base font-semibold text-gray-900 mb-4">Resumo</h2>
+
+                            <div class="space-y-4">
+                                {% for item in cart_items %}
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-14 h-14 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
+                                            {% with item.variant.product.images.first as product_image %}
+                                                {% if product_image %}
+                                                    <img src="{{ product_image.image.url }}"
+                                                         alt="{{ item.variant.product.name }}"
+                                                         class="w-full h-full object-cover">
+                                                {% else %}
+                                                    <svg class="w-7 h-7 text-gray-300" viewBox="0 0 20 20"
+                                                         fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                                              clip-rule="evenodd"></path>
+                                                    </svg>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate">{{ item.variant.product.name }}</p>
+                                                    <p class="text-xs text-gray-500 mt-1">
+                                                        Qtd: {{ item.quantity }}
+                                                        {% if item.variant.size %} · {{ item.variant.size }}{% endif %}
+                                                    </p>
+                                                </div>
+                                                <div class="text-sm font-semibold text-gray-900 whitespace-nowrap">
+                                                    {{ item.get_total_price }} MZN
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="h-px bg-gray-200 my-5"></div>
+
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between text-gray-700">
+                                    <span>Subtotal</span>
+                                    <span class="font-medium">{{ total_price }} MZN</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-gray-700">
+                                    <span>Envio</span>
+                                    <span class="font-medium" id="shippingLabel">—</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-gray-700">
+                                    <span>Desconto</span>
+                                    <span class="font-medium">0 MZN</span>
+                                </div>
+
+                                <div class="h-px bg-gray-200 my-3"></div>
+
+                                <div class="flex items-center justify-between text-gray-900">
+                                    <span class="text-base font-semibold">Total</span>
+                                    <span class="text-base font-semibold" id="totalLabel">{{ total_price }} MZN</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const shipAddressBlock = document.getElementById('shipAddressBlock');
+            const pickupBlock = document.getElementById('pickupBlock');
+            const shippingSection = document.getElementById('shippingSection');
+            const billingBlock = document.getElementById('billingBlock');
+
+            const shippingLabel = document.getElementById('shippingLabel');
+            const totalLabel = document.getElementById('totalLabel');
+
+            // Base total (string) -> number
+            const baseTotalStr = "{{ total_price|default:'0' }}";
+            const baseTotal = Number(String(baseTotalStr).replace(/[^\d.]/g, "")) || 0;
+
+            function setDeliveryUI() {
+                const type = document.querySelector('input[name="delivery_type"]:checked')?.value || 'ship';
+
+                if (type === 'pickup') {
+                    shipAddressBlock.classList.add('hidden');
+                    pickupBlock.classList.remove('hidden');
+                    shippingSection.classList.add('hidden');
+
+                    shippingLabel.textContent = "FREE";
+                    totalLabel.textContent = `${baseTotal.toLocaleString('pt-PT')} MZN`;
+                } else {
+                    shipAddressBlock.classList.remove('hidden');
+                    pickupBlock.classList.add('hidden');
+                    shippingSection.classList.remove('hidden');
+                    // Recalcular com base no método de envio selecionado
+                    updateShippingTotal();
+                }
+            }
+
+            function updateShippingTotal() {
+                const selected = document.querySelector('input[name="shipping_method"]:checked');
+                if (!selected) {
+                    shippingLabel.textContent = "—";
+                    totalLabel.textContent = `${baseTotal.toLocaleString('pt-PT')} MZN`;
+                    return;
+                }
+
+                // Tenta extrair o preço do label (fallback simples)
+                // Melhor: você pode colocar data-price no input no loop do Django.
+                const card = selected.closest('label');
+                let priceText = card?.querySelector('div.text-sm.font-semibold, div.text-sm.font-semibold.text-gray-900')?.textContent || "";
+                priceText = priceText.trim().toUpperCase();
+
+                let shipCost = 0;
+                if (priceText.includes("FREE")) {
+                    shipCost = 0;
+                    shippingLabel.textContent = "FREE";
+                } else {
+                    const num = Number(priceText.replace(/[^\d.]/g, "")) || 0;
+                    shipCost = num;
+                    shippingLabel.textContent = `MZN ${shipCost.toFixed(2)}`;
+                }
+
+                const grand = baseTotal + shipCost;
+                totalLabel.textContent = `${grand.toLocaleString('pt-PT')} MZN`;
+            }
+
+            function setBillingUI() {
+                const same = document.querySelector('input[name="billing_same_as_shipping"]:checked')?.value || 'yes';
+                if (same === 'no') billingBlock.classList.remove('hidden');
+                else billingBlock.classList.add('hidden');
+            }
+
+            // Delivery listeners
+            document.querySelectorAll('input[name="delivery_type"]').forEach(r => {
+                r.addEventListener('change', setDeliveryUI);
+            });
+
+            // Shipping listeners
+            document.querySelectorAll('input[name="shipping_method"]').forEach(r => {
+                r.addEventListener('change', updateShippingTotal);
+            });
+
+            // Billing listeners
+            document.querySelectorAll('input[name="billing_same_as_shipping"]').forEach(r => {
+                r.addEventListener('change', setBillingUI);
+            });
+
+            // Submit loading
+            const form = document.getElementById('checkoutForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Processando...";
+            });
+
+            // Init
+            setDeliveryUI();
+            setBillingUI();
+            updateShippingTotal();
+        })();
+    </script>
+
+    <script>
+        new kursor({
+            type: 1,
+            removeDefaultCursor: true,
+            color: '#000'
+        })
+    </script>
+{% endblock %}

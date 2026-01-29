@@ -1,0 +1,179 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+    {% include "navbar.html" %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start lg:items-center pt-6">
+            <div class="lg:col-span-8">
+                <div class="kicker text-xs text-[var(--accent)]/85">Encomendas</div>
+
+                <h1 class="mt-4 font-display uppercase text-5xl sm:text-6xl md:text-7xl leading-[0.9]">
+                    Acompanhar<br class="hidden sm:block"/>
+                    <span class="text-white/70">encomendas.</span>
+                </h1>
+
+                <p class="mt-5 text-white/65 text-base leading-relaxed max-w-2xl">
+                    Introduz o teu email, confirma com código e vê o histórico de encomendas.
+                </p>
+
+                <div class="mt-7 flex flex-col sm:flex-row gap-3">
+                    <button
+                            type="button"
+                            id="openOrdersOTP"
+                            class="rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition text-center"
+                    >
+                        Confirmar email
+                    </button>
+
+                    <a
+                            href="{% url 'shop:product_list' %}"
+                            class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center"
+                    >
+                        Voltar ao merch
+                    </a>
+                </div>
+
+                <div class="mt-6 rounded-3xl border border-white/10 bg-black/20 p-6 md:p-8">
+                    <div class="kicker text-xs text-[var(--accent)]/80">Email</div>
+                    <input
+                            id="ordersEmail"
+                            type="email"
+                            class="mt-3 w-full rounded-2xl bg-black/40 border border-white/15 px-4 py-3 text-white/90 outline-none focus:border-white/30"
+                            placeholder="teu@email.com"
+                    />
+                    <p class="mt-3 text-xs text-white/45 font-monoish">
+                        Vamos enviar um código de 6 dígitos para este email.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    {% include "accounts/partials/otp_modal.html" %}
+    {% include "footer.html" %}
+
+    <script>
+        const qs = (s, el = document) => el.querySelector(s);
+
+        function getCSRFToken() {
+            const cookie = document.cookie.split("; ").find(x => x.startsWith("csrftoken="));
+            if (cookie) return decodeURIComponent(cookie.split("=")[1]);
+            const hidden = qs("#otpCsrf");
+            return hidden ? hidden.value : "";
+        }
+
+        function setOTPMsg(text, kind = "info") {
+            const el = qs("#otpMsg");
+            if (!el) return;
+            const base = "mt-2 text-sm";
+            const color = kind === "error" ? "text-red-300" : (kind === "ok" ? "text-emerald-300" : "text-white/65");
+            el.className = `${base} ${color}`;
+            el.textContent = text || "";
+        }
+
+        function openOTPModalForOrders() {
+            const overlay = qs("#otpOverlay");
+            const modal = qs("#otpModal");
+            qs("#otpPurpose").value = "orders_access";
+
+            overlay.classList.remove("hidden");
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+
+            // prefill do input local
+            const source = qs("#ordersEmail");
+            const target = qs("#otpEmail");
+            if (source && target) target.value = source.value || "";
+
+            // muda copy
+            qs("#otpKicker").textContent = "Acesso";
+            qs("#otpTitle").innerHTML = "Confirmar email<br><span class='text-white/70'>para ver encomendas.</span>";
+            qs("#otpHint").textContent = "Enviamos um código de 6 dígitos para o teu email.";
+
+            setOTPMsg("");
+            setTimeout(() => qs("#otpEmail")?.focus(), 50);
+        }
+
+        function closeOTPModal() {
+            qs("#otpOverlay")?.classList.add("hidden");
+            const modal = qs("#otpModal");
+            modal?.classList.add("hidden");
+            modal?.setAttribute("aria-hidden", "true");
+        }
+
+        async function otpRequest() {
+            const email = (qs("#otpEmail")?.value || "").trim().toLowerCase();
+            const purpose = qs("#otpPurpose")?.value || "orders_access";
+
+            if (!email) {
+                setOTPMsg("Insere o teu email.", "error");
+                return;
+            }
+
+            setOTPMsg("A enviar código…");
+            const res = await fetch("{% url 'accounts:otp_request' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                    "X-CSRFToken": getCSRFToken(),
+                },
+                body: new URLSearchParams({email, purpose}).toString(),
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) {
+                setOTPMsg(data.error || "Não foi possível enviar o código.", "error");
+                return;
+            }
+
+            setOTPMsg("Código enviado. Introduz os 6 dígitos.", "ok");
+            qs("#otpCode")?.focus();
+        }
+
+        async function otpVerify() {
+            const email = (qs("#otpEmail")?.value || "").trim().toLowerCase();
+            const code = (qs("#otpCode")?.value || "").trim();
+            const purpose = qs("#otpPurpose")?.value || "orders_access";
+
+            if (!email || !code) {
+                setOTPMsg("Insere email e código.", "error");
+                return;
+            }
+
+            setOTPMsg("A verificar…");
+            const res = await fetch("{% url 'accounts:otp_verify' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                    "X-CSRFToken": getCSRFToken(),
+                },
+                body: new URLSearchParams({email, code, purpose}).toString(),
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) {
+                setOTPMsg(data.error || "Código inválido.", "error");
+                return;
+            }
+
+            // agora redireciona para listagem (a tua view deve checar session otp_verified_email)
+            window.location.href = "{% url 'shop:order_list' %}";
+        }
+
+        // wire
+        (function init() {
+            qs("#openOrdersOTP")?.addEventListener("click", openOTPModalForOrders);
+
+            qs("#otpClose")?.addEventListener("click", closeOTPModal);
+            qs("#otpOverlay")?.addEventListener("click", closeOTPModal);
+
+            qs("#otpSendBtn")?.addEventListener("click", otpRequest);
+            qs("#otpResendBtn")?.addEventListener("click", otpRequest);
+            qs("#otpVerifyBtn")?.addEventListener("click", otpVerify);
+        })();
+    </script>
+{% endblock %}

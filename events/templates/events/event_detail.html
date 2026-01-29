@@ -1,0 +1,142 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+
+        <!-- BREADCRUMB -->
+        <nav class="text-[11px] text-white/55 font-monoish flex flex-wrap gap-2 items-center">
+            <a href="{% url 'eventos:agenda' %}" class="hover:text-white transition">Eventos</a>
+            <span class="opacity-50">›</span>
+            <a href="{% url 'eventos:agenda' %}?city={{ object.city|urlencode }}"
+               class="hover:text-white transition">{{ object.city }}</a>
+            <span class="opacity-50">›</span>
+            <span class="text-white/80">{{ object.title }}</span>
+        </nav>
+
+        <!-- TOP: 2 COLUNAS (POSTER + INFO) -->
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+            <!-- Poster -->
+            <div class="lg:col-span-6">
+                <div class="border border-white/10 overflow-hidden bg-black/25">
+                    <div class="relative aspect-[16/9]">
+                        <img
+                                src="{{ object.poster.url }}"
+                                alt="{{ object.title }}"
+                                class="absolute inset-0 w-full h-full object-cover"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="lg:col-span-6">
+                <h1 class="font-display uppercase text-4xl md:text-5xl leading-[0.92]">
+                    {{ object.title }}
+                </h1>
+
+                <div class="mt-4 space-y-2">
+                    <div class="text-white/85 font-semibold text-lg">
+                        {{ object.venue|default:"" }}
+                    </div>
+
+                    <div class="flex items-center gap-2 text-white/60 text-sm font-monoish">
+                        <!-- ícone location simples -->
+                        <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-white/15">
+            ⌁
+          </span>
+                        <span>{{ object.city }}</span>
+                    </div>
+
+                    <div class="mt-4 text-white/70 font-monoish text-sm">
+                        {{ object.start_at|date:"l, d F Y" }}
+                        {% if object.start_at %} · {{ object.start_at|date:"H:i" }}{% endif %}
+                    </div>
+                </div>
+
+                <!-- ACTIONS ROW: Share + Status -->
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                    <!-- Share -->
+                    <button
+                            type="button"
+                            id="shareBtn"
+                            class="rounded-full px-6 py-3 bg-white text-black text-center font-bold hover:bg-white/90 transition">
+                        <span class="text-lg">⤴</span>
+                        <span class="font-monoish text-sm">Share</span>
+                    </button>
+
+                    <!-- Status -->
+                    <div class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
+                        {% if object.is_past %}
+                            <span class="font-monoish text-sm text-white/65">Evento terminado</span>
+                        {% else %}
+                            <span class="font-monoish text-sm text-white/80">Evento activo</span>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!-- CTA (opcional) -->
+                {% if object.ticket_url %}
+                    <a href="{{ object.ticket_url }}" target="_blank" rel="noopener"
+                       class="mt-4 inline-flex w-full items-center justify-center rounded-full px-6 py-4 bg-white text-black font-bold hover:bg-white/90 transition">
+                        Bilhetes / Inscrição
+                    </a>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section class="mt-16 lg:mt-20 grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-8">
+                <h2 class="font-display uppercase text-3xl leading-[0.95]">About</h2>
+
+                <div class="mt-5 text-white/70 leading-relaxed text-base ">
+                    {{ object.description|linebreaksbr }}
+                </div>
+
+                {% if object.lineup_text %}
+                    <div class="mt-10">
+                        <div class="kicker text-xs text-[var(--accent)]/80">Line-up</div>
+                        <div class="mt-2 bg-black/20 font-monoish text-sm text-white/70 whitespace-pre-line">
+                            {{ object.lineup_text }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+    </main>
+
+    {% include 'footer.html' %}
+
+    <script>
+        (function () {
+            const btn = document.getElementById("shareBtn");
+            if (!btn) return;
+
+            btn.addEventListener("click", async () => {
+                const url = window.location.href;
+                const title = document.title;
+
+                try {
+                    if (navigator.share) {
+                        await navigator.share({title, url});
+                    } else {
+                        await navigator.clipboard.writeText(url);
+                        btn.innerHTML = '<span class="text-lg">✓</span><span class="font-monoish text-sm">Copiado</span>';
+                        setTimeout(() => {
+                            btn.innerHTML = '<span class="text-lg">⤴</span><span class="font-monoish text-sm">Share</span>';
+                        }, 1200);
+                    }
+                } catch (e) {
+                }
+            });
+        })();
+    </script>
+{% endblock %}

@@ -1,0 +1,275 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+        <!-- HERO -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start lg:items-center pt-[2rem]">
+            <div class="lg:col-span-6">
+                <div class="kicker text-xs text-[var(--accent)]/85">Cultura · Universo · Música · Juventude · Moda ·
+                    Experiência · Imersão
+                </div>
+
+                <h1 class="mt-4 font-display h1-planeta text-[64px] sm:text-[96px] md:text-[128px]">
+                    HUB<br/>
+                    <span id="type-planeta"></span>
+                </h1>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a class="rounded-full px-6 py-3 bg-white text-black text-center font-bold hover:bg-white/90 transition"
+                       href="{% url 'eventos:agenda' %}">
+                        Ver Eventos
+                    </a>
+                    <a class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center"
+                       href="{% url 'shop:product_list' %}">
+                        Ver Drops
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-6 flex items-center justify-center">
+                <div class="relative" id="orbitWrap">
+                    <!-- glow atrás -->
+                    <div class="absolute inset-0 -z-10 blur-3xl opacity-60 planet-glow"></div>
+
+                    <!-- a imagem -->
+                    <img
+                            alt="PLANETA"
+                            class="w-auto max-h-[520px] select-none pointer-events-none"
+                            draggable="false"
+                            id="planetImg"
+                            src="{% static 'img/Moonman1.png' %}"
+                    />
+                </div>
+            </div>
+
+        </section>
+
+        <!-- EDITORIAL HIGHLIGHTS -->
+        <section class="mt-14 md:mt-20">
+            <div class="flex items-end justify-between gap-4">
+                <div>
+                    <div class="kicker text-xs text-[var(--accent)]/80">Highlights</div>
+                    <h2 class="font-display uppercase text-4xl leading-[0.9]">Em destaque</h2>
+                </div>
+                <a class="text-[10px] kicker text-white/60 hover:text-white transition link-u"
+                   href="{% url 'core:universo' %}">Abrir
+                    universo</a>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-5">
+                <div class="md:col-span-7" id="homeFeaturedA">
+                    <div class="poster-clean reveal group block">
+                        <div class="poster-img relative aspect-[16/9] overflow-hidden rounded-[inherit]">
+                            <iframe
+                                    class="absolute inset-0 w-full h-full"
+                                    src="https://www.youtube-nocookie.com/embed/RRw1Fmq35Uc?si=DLCWtOnWUVcF3u3V"
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen>
+                            </iframe>
+
+                            <!-- (opcional) um brilho/overlay sutil para manter a estética do poster -->
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-70 group-hover:opacity-50 transition"></div>
+                        </div>
+
+                        <div class="caption">
+                            <div class="kicker text-[10px] text-[var(--accent)]/85">Produção</div>
+                            <div class="mt-2 font-display uppercase title">Produção audiovisual</div>
+                            <div class="mt-2 font-monoish text-xs meta">Vídeo · YouTube</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-5 grid grid-cols-1 gap-5">
+                    <div id="homeFeaturedC">
+                        <a href="{% url 'eventos:detail' e.slug %}" class="poster-clean reveal group block">
+                            <div class="poster-img relative aspect-[16/10]">
+                                <img
+                                        class="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-[1.02] transition duration-200"
+                                        src="{{ e.poster.url }}"
+                                        alt="{{ e.title }}"
+                                />
+                            </div>
+
+                            <div class="caption">
+                                <div class="kicker text-[10px] text-[var(--accent)]/85">Eventos</div>
+                                <div class="mt-2 font-display uppercase  title">{{ e.title }}</div>
+                                <div class="mt-2 font-monoish text-xs meta">{{ e.city }} · {{ e.start_at|date:"d/m/Y" }}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div id="homeFeaturedB">
+                        {% if top_product %}
+                            <a href="{% url 'shop:product_detail' top_product.slug %}"
+                               class="poster-clean reveal group block">
+                                <div class="poster-img relative aspect-[16/10]">
+                                    {% if top_product.images.all %}
+                                        <img
+                                                class="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-[1.02] transition duration-200"
+                                                src="{{ top_product.images.first.image.url }}"
+                                                alt="{{ top_product.name }}"
+                                        />
+                                    {% else %}
+                                        <div class="absolute inset-0 bg-gradient-to-br from-black/30 to-[var(--accent)]/20 flex items-center justify-center">
+                                            <span class="text-white/50 text-sm">{{ top_product.name }}</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                </div>
+
+                                <div class="caption">
+                                    <div class="kicker text-[10px] text-[var(--accent)]/85">Destaque</div>
+                                    <div class="mt-2 font-display uppercase title">{{ top_product.name }}</div>
+                                    <div class="mt-2 font-monoish text-xs meta">
+                                        {{ top_product.price|floatformat:2 }} MZN
+                                    </div>
+                                </div>
+                            </a>
+                        {% else %}
+                            <!-- Fallback quando não há produtos -->
+                            <a href="{% url 'shop:product_list' %}" class="poster-clean reveal group block">
+                                <div class="poster-img relative aspect-[16/10] bg-gradient-to-br from-black/30 to-[var(--accent)]/20 flex items-center justify-center">
+                                    <div class="text-center p-4">
+                                        <div class="text-white/60 text-2xl mb-2">🛒</div>
+                                        <div class="text-white font-medium">Ver coleção</div>
+                                    </div>
+                                </div>
+                                <div class="caption">
+                                    <div class="kicker text-[10px] text-[var(--accent)]/85">Merch</div>
+                                    <div class="mt-2 font-display uppercase title">Nossos Produtos</div>
+                                    <div class="mt-2 font-monoish text-xs meta">Explore nossa merch exclusiva</div>
+                                </div>
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Parceiros & Colaborações -->
+        <section class="mt-14 md:mt-20">
+            <div class="flex items-end justify-between gap-4">
+                <div>
+                    <div class="kicker text-xs text-[var(--accent)]/80">Rede</div>
+                    <h2 class="font-display uppercase text-4xl md:text-5xl leading-[0.9]">
+                        Parceiros &<br class="hidden sm:block"/> Colaborações
+                    </h2>
+                </div>
+                <a class="text-[10px] kicker text-white/60 hover:text-white transition link-u" href="contacto.html">
+                    Propor colaboração
+                </a>
+            </div>
+
+            <div class="mt-6 rounded-3xl border border-white/10 glass noise relative overflow-hidden">
+                <!-- glows -->
+                <div class="absolute -top-28 -right-28 h-80 w-80 rounded-full blur-3xl bg-[var(--accent)]/10"></div>
+                <div class="absolute -bottom-28 -left-28 h-80 w-80 rounded-full blur-3xl bg-white/5"></div>
+
+                <!-- marquee -->
+                <div class="py-6 border-b border-white/10 overflow-hidden">
+                    <div class="partners-marquee">
+                        <div class="partners-track">
+                            <span class="partners-item">CASTLE LITE</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">AFRORAVE</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">LAYLIZZY</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">GLOBAL GATEWAY</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">FROZY</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">DOPEKIDZ</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">PLANETA FEST</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">EVENTOS · MUSIC · BRAND</span>
+                            <span class="partners-dot">•</span>
+
+                            <!-- DUPLICADO para loop contínuo -->
+                            <span class="partners-item">CASTLE LITE</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">AFRORAVE</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">LAYLIZZY</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">GLOBAL GATEWAY</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">FROZY</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">DOPEKIDZ</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">PLANETA FEST</span>
+                            <span class="partners-dot">•</span>
+                            <span class="partners-item">EVENTOS · MUSIC · BRAND</span>
+                            <span class="partners-dot">•</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- grid de logos/nome -->
+                <div class="p-6 md:p-8">
+                    <div class="kicker text-xs text-[var(--accent)]/80">Seleção</div>
+                    <p class="mt-2 text-sm text-white/60 max-w-3xl">
+                        Marcas, artistas e colectividades que orbitam com a PLANETA - cultura aplicada, presença real.
+                    </p>
+
+                    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+                        <!-- Troca os textos por logos (img) se tiveres -->
+                        <a class="partner-tile reveal" data-cursor="View" href="#">
+                            <img alt="" src="{% static 'img/colabs/lite.png' %}">
+                        </a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#">
+                            <img alt="" src="{% static 'img/colabs/1630578221834.png' %}">
+                        </a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#">
+                            <img alt="" src="{% static 'img/colabs/muhlavasi.png' %}">
+                        </a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#">
+                            <img alt="" src="{% static 'img/colabs/GG.png' %}">
+                        </a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#">
+                            <img alt="" src="{% static 'img/colabs/frozy.png' %}">
+                        </a>
+                        <a class="reveal mt-[1.8rem]" data-cursor="View" href="#">
+                            <span class="partners-item">DOPE SOLE</span>
+                        </a>
+                    </div>
+
+                    <!-- linha editorial final -->
+                    <div class="mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-[10px] kicker text-white/55">
+                        <div>PARCERIAS · SPONSORSHIP · ARTIST BRAND · PRODUÇÃO</div>
+                        <!--                    <a class="text-white/60 hover:text-white transition link-u" href="contacto.html">Falar com a-->
+                        <!--                        PLANETA</a>-->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MANIFESTO -->
+        <section class="mt-14 md:mt-20">
+            <div class="rounded-3xl border border-white/10 glass p-7 md:p-10 noise relative overflow-hidden reveal">
+                <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl bg-[var(--accent)]/14"></div>
+                <div class="absolute -bottom-24 -left-24 h-72 w-72 rounded-full blur-3xl bg-[var(--olive)]/16"></div>
+
+                <div class="kicker text-xs text-[var(--accent)]/80">Manifesto</div>
+                <h3 class="mt-3 font-display uppercase text-5xl md:text-6xl leading-[0.85]">
+                    Cultura<br/><span class="text-white/70">como linguagem.</span>
+                </h3>
+                <p class="mt-4 text-sm text-white/65 max-w-3xl">
+                    PLANETA é música, juventude e experiência - documentadas como arquivo e activadas como drop.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    {% include 'footer.html' %}
+
+{% endblock %}

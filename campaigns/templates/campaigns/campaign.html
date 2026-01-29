@@ -1,0 +1,133 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+    {% include "navbar.html" %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+
+        <!-- HEADER -->
+        <div class="text-center mb-12 reveal">
+            <div class="font-monoish kicker text-[10px] text-[var(--accent)]/80 uppercase tracking-wider">
+                Impacto
+            </div>
+            <h1 class="font-display text-4xl md:text-6xl uppercase leading-[0.9] mt-3">
+                Campanhas
+            </h1>
+            <p class="mt-4 text-white/60 max-w-2xl mx-auto text-sm leading-relaxed">
+                Ações beneficentes, apoio comunitário e projetos promovidos pela PLANETA.
+            </p>
+        </div>
+
+        <!-- ACTIVE CAMPAIGNS -->
+        <section class="mb-16">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="font-display text-2xl uppercase">
+                    Em andamento
+                </h2>
+                <div class="text-[10px] kicker text-white/45">
+                    {{ campaigns|length }} ativa{{ campaigns|length|pluralize }}
+                </div>
+            </div>
+
+            {% if campaigns %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for campaign in campaigns %}
+                        <div class="group reveal">
+                            <a href="{% url 'campaigns:campaign_detail' campaign.slug %}" class="block">
+                                <div class="poster-card hover:shadow-glow transition-all duration-300">
+
+                                    <!-- IMAGE -->
+                                    <div class="relative aspect-[4/3] overflow-hidden">
+                                        <img src="{{ campaign.cover_image.url }}"
+                                             alt="{{ campaign.title }}"
+                                             class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500">
+
+                                        <!-- OVERLAY -->
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                                    </div>
+
+                                    <!-- CONTENT -->
+                                    <div class="p-5">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-monoish kicker text-[10px] text-[var(--accent)]/80 uppercase tracking-wider">
+                                                {{ campaign.start_date|date:"M Y" }}
+                                                {% if campaign.end_date %}
+                                                    – {{ campaign.end_date|date:"M Y" }}
+                                                {% endif %}
+                                            </div>
+
+                                            {% if campaign.is_featured %}
+                                                <span class="text-[10px] kicker text-white/50">⭐</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <h3 class="font-display text-xl uppercase leading-[0.95] mb-3 line-clamp-2">
+                                            {{ campaign.title }}
+                                        </h3>
+
+                                        <p class="text-white/60 text-xs leading-relaxed mb-4 line-clamp-3">
+                                            {{ campaign.short_description }}
+                                        </p>
+
+                                        <div class="flex items-center justify-between">
+                                            {% if campaign.call_to_action %}
+                                                <span class="text-[10px] kicker text-white/70 group-hover:text-white transition">
+                            {{ campaign.call_to_action }} →
+                        </span>
+                                            {% else %}
+                                                <span class="text-[10px] kicker text-white/45 group-hover:text-white transition">
+                            Ver detalhes →
+                        </span>
+                                            {% endif %}
+
+                                            {% if campaign.status == 'active' %}
+                                                <span class="animate-pulse">
+                            <span class="inline-block w-2 h-2 rounded-full bg-[var(--accent)]"></span>
+                        </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="rounded-3xl border border-white/10 bg-black/20 p-12 text-center">
+                    <div class="text-white/40 text-6xl mb-4">✺</div>
+                    <h3 class="font-display text-xl uppercase mb-2">Sem campanhas ativas</h3>
+                    <p class="text-white/50 text-sm max-w-md mx-auto">
+                        No momento não há campanhas em andamento.
+                        Volte em breve para novas iniciativas.
+                    </p>
+                </div>
+            {% endif %}
+        </section>
+
+
+        <!-- CTA -->
+        <section class="mt-16">
+            <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-black/40 to-[var(--accent)]/5 p-8 md:p-12 text-center">
+                <div class="font-monoish kicker text-[10px] text-[var(--accent)]/80 uppercase tracking-wider">
+                    Suporte
+                </div>
+                <h3 class="font-display text-2xl md:text-3xl uppercase mt-2">
+                    Quer sugerir uma causa?
+                </h3>
+                <p class="mt-4 text-white/65 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+                    A PLANETA está sempre aberta a colaborações com organizações e causas sociais.
+                    Entre em contacto para discutir possíveis parcerias.
+                </p>
+                <a href="mailto:impacto@planeta.co.mz?subject=Sugestão de Campanha"
+                   class="inline-block mt-6 rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition shadow-glow">
+                    Contactar
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+{% endblock %}

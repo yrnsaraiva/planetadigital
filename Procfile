@@ -1,0 +1,1 @@
+web: gunicorn planetadigital.wsgi:application --log-file -

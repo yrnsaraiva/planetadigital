@@ -1,0 +1,388 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+    {% include "navbar.html" %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-20">
+
+        <!-- HEADER -->
+        <section class="mb-10 reveal">
+            <div class="flex items-start justify-between gap-6">
+                <div class="flex items-start gap-4">
+                    <a href="{% url 'shop:product_list' %}"
+                       class="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/25 hover:border-white/30 hover:bg-white/5 transition">
+                        <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </a>
+
+                    <div>
+                        <div class="kicker text-xs text-[var(--accent)]/80">Merch</div>
+                        <h1 class="mt-2 font-display uppercase text-4xl md:text-5xl leading-[0.9]">
+                            Carrinho
+                        </h1>
+                        <p class="mt-2 text-sm text-white/60 font-monoish">
+                            Revê os itens antes de finalizar a reserva.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-[10px] kicker text-white/55 mt-2">
+                    {{ cart_items|length }} item{{ cart_items|length|pluralize }}
+                </div>
+            </div>
+
+        </section>
+
+        {% if cart_items %}
+            <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                <!-- ITEMS -->
+                <div class="lg:col-span-8 space-y-5">
+
+                    {% for item in cart_items %}
+                        <article class="poster-card reveal overflow-hidden group">
+                            <div class="p-5 md:p-6">
+                                <div class="flex flex-col md:flex-row gap-5">
+
+                                    <!-- IMAGE -->
+                                    <div class="md:w-28 md:h-28 w-full aspect-square">
+                                        {% with image=item.variant.product.images.first %}
+                                            {% if image %}
+                                                <div class="relative w-full h-full rounded-2xl overflow-hidden border border-white/10 bg-black/30">
+                                                    <img
+                                                            src="{{ image.image.url }}"
+                                                            alt="{{ item.variant.product.name }}"
+                                                            class="w-full h-full object-cover opacity-95 group-hover:scale-[1.03] transition duration-300"
+                                                            loading="lazy"
+                                                    >
+                                                    <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none"></div>
+                                                </div>
+                                            {% else %}
+                                                <div class="w-full h-full rounded-2xl border border-white/10 bg-black/30"></div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+
+                                    <!-- CONTENT -->
+                                    <div class="flex-1">
+                                        <div class="flex items-start justify-between gap-4">
+                                            <div>
+                                                <div class="kicker text-[10px] text-[var(--accent)]/80">Item</div>
+                                                <h3 class="mt-1 font-display uppercase text-2xl leading-[0.9]">
+                                                    <a href="{% url 'shop:product_detail' item.variant.product.slug %}"
+                                                       class="hover:text-[var(--accent)] transition">
+                                                        {{ item.variant.product.name }}
+                                                    </a>
+                                                </h3>
+
+                                                <div class="mt-3 flex flex-wrap items-center gap-2">
+                                                    <span class="rounded-full px-3 py-1 text-[10px] kicker border border-white/15 bg-black/30 text-white/70">
+                                                        Tamanho: {{ item.variant.size }}
+                                                    </span>
+
+                                                    {% if item.variant.price_override %}
+                                                        <span class="rounded-full px-3 py-1 text-[10px] kicker border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)]">
+                                                            Preço especial
+                                                        </span>
+                                                    {% endif %}
+
+                                                    {% if item.quantity > item.variant.stock_qty %}
+                                                        <span class="rounded-full px-3 py-1 text-[10px] kicker border border-red-500/30 bg-red-500/10 text-red-300">
+                                                            Estoque insuficiente
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <!-- UNIT PRICE -->
+                                            <div class="text-right">
+                                                <div class="kicker text-[10px] text-white/45">Unitário</div>
+                                                <div class="mt-1 font-display uppercase text-2xl leading-[0.9] text-[var(--accent)]">
+                                                    {{ item.variant.get_final_price }} MZN
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- ACTIONS ROW -->
+                                        <div class="mt-5 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                                            <!-- LINE TOTAL -->
+                                            <div class="text-sm text-white/55 font-monoish">
+                                                Total do item:
+                                                <span id="itemTotal{{ item.id }}"
+                                                      class="ml-2 text-white font-bold">{{ item.get_total_price }} MZN</span>
+                                            </div>
+
+                                            <!-- QTY + REMOVE -->
+                                            <div class="flex items-center justify-between sm:justify-end gap-4">
+
+                                                <!-- QTY -->
+                                                <div class="flex items-center rounded-2xl border border-white/15 bg-black/30 overflow-hidden">
+                                                    <button type="button"
+                                                            onclick="updateQuantity({{ item.id }}, -1)"
+                                                            class="h-10 w-10 grid place-items-center text-white/60 hover:text-white hover:bg-white/5 transition">
+                                                        −
+                                                    </button>
+
+                                                    <span id="quantity{{ item.id }}"
+                                                          class="h-10 min-w-[2.5rem] grid place-items-center font-monoish text-sm text-white/85">
+                                                        {{ item.quantity }}
+                                                    </span>
+
+                                                    <button type="button"
+                                                            onclick="updateQuantity({{ item.id }}, 1)"
+                                                            class="h-10 w-10 grid place-items-center text-white/60 hover:text-white hover:bg-white/5 transition">
+                                                        +
+                                                    </button>
+                                                </div>
+
+                                                <!-- REMOVE -->
+                                                <button type="button"
+                                                        onclick="removeItem({{ item.id }})"
+                                                        class="text-[10px] kicker text-white/55 hover:text-red-300 transition link-u">
+                                                    Remover
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+
+                </div>
+
+                <!-- SUMMARY -->
+                <aside class="lg:col-span-4">
+                    <div class="sticky top-24 space-y-5">
+
+                        <div class="rounded-3xl border border-white/10 glass noise p-6 reveal">
+                            <div class="kicker text-xs text-[var(--accent)]/80">Resumo</div>
+                            <h3 class="mt-2 font-display uppercase text-3xl leading-[0.9]">Pedido</h3>
+
+                            <div class="mt-5 space-y-3 text-sm font-monoish">
+                                <div class="flex items-center justify-between text-white/70">
+                                    <span>Subtotal</span>
+                                    <span id="cartSubtotal" class="text-white">{{ total_price }} MZN</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-white/70">
+                                    <span>Entrega</span>
+                                    <span class="text-white/70">—</span>
+                                </div>
+
+                                <div class="pt-4 border-t border-white/10 flex items-end justify-between">
+                                    <div class="text-white/60 text-xs kicker">Total</div>
+                                    <div class="text-right">
+                                        <div id="cartTotal"
+                                             class="font-display uppercase text-3xl leading-[0.9] text-[var(--accent)]">
+                                            {{ total_price }} MZN
+                                        </div>
+                                        <div class="mt-1 text-[10px] kicker text-white/45">
+                                            Pagamento no levantamento (Triunfo).
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="{% url 'shop:checkout' %}"
+                               class="mt-6 block w-full rounded-full px-6 py-3 bg-white text-black font-bold text-center hover:bg-white/90 transition shadow-glow">
+                                Finalizar reserva
+                            </a>
+
+                            <div class="mt-4 text-[10px] kicker text-white/45">
+                                Confirmação por WhatsApp. Sem spam.
+                            </div>
+                        </div>
+
+                        <!-- HELP -->
+                        <div class="rounded-3xl border border-white/10 bg-black/20 p-6 reveal">
+                            <div class="kicker text-xs text-[var(--accent)]/80">Ajuda</div>
+                            <h4 class="mt-2 font-display uppercase text-2xl leading-[0.9]">Precisa de ajuda?</h4>
+                            <p class="mt-3 text-sm text-white/60">
+                                Dúvidas sobre tamanhos, trocas ou reserva.
+                            </p>
+                            <a href="{% url 'core:contacto' %}"
+                               class="mt-4 inline-flex items-center text-[10px] kicker text-white/70 hover:text-white transition link-u">
+                                Contactar suporte
+                            </a>
+                        </div>
+
+                    </div>
+                </aside>
+
+            </section>
+        {% else %}
+            <!-- EMPTY -->
+            <section class="text-center py-16 px-4 reveal">
+                <div class="max-w-md mx-auto rounded-3xl border border-white/10 glass noise p-10">
+                    <div class="kicker text-xs text-[var(--accent)]/80">Merch</div>
+                    <h3 class="mt-3 font-display uppercase text-4xl leading-[0.9]">
+                        Carrinho vazio
+                    </h3>
+                    <p class="mt-3 text-white/60 text-sm">
+                        Ainda não adicionaste nada. Explora os drops e volta aqui para finalizar.
+                    </p>
+
+                    <a href="{% url 'shop:product_list' %}"
+                       class="mt-7 inline-flex items-center justify-center rounded-full px-7 py-3 bg-white text-black font-bold hover:bg-white/90 transition shadow-glow">
+                        Explorar coleção
+                    </a>
+                </div>
+            </section>
+        {% endif %}
+
+    </main>
+
+    {% include "footer.html" %}
+
+    <script>
+        // URLs seguras (sem replace de "0")
+        const UPDATE_URL = "{% url 'shop:update_cart_item' 999999 %}".replace("999999", "__ID__");
+        const REMOVE_URL = "{% url 'shop:remove_from_cart' 999999 %}".replace("999999", "__ID__");
+
+        async function updateQuantity(itemId, change) {
+            const quantityElement = document.getElementById('quantity' + itemId);
+            const itemTotalElement = document.getElementById('itemTotal' + itemId);
+
+            const currentQuantity = parseInt(quantityElement.textContent.trim(), 10);
+            const desiredQuantity = currentQuantity + change;
+
+            if (desiredQuantity < 1) {
+                await removeItem(itemId);
+                return;
+            }
+
+            // loading state
+            quantityElement.innerHTML = `<span class="animate-pulse">...</span>`;
+            if (itemTotalElement) itemTotalElement.innerHTML = `<span class="animate-pulse">...</span>`;
+
+            try {
+                const response = await fetch(UPDATE_URL.replace("__ID__", itemId), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ quantity: desiredQuantity })
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${text.slice(0, 200)}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    showNotification(data.message || 'Erro ao atualizar quantidade', 'error');
+                    // volta ao que estava no DB/UI
+                    quantityElement.textContent = (data.quantity ?? currentQuantity);
+                    if (itemTotalElement && data.item_total) itemTotalElement.textContent = data.item_total + ' MZN';
+                    return;
+                }
+
+                if (data.removed) {
+                    location.reload();
+                    return;
+                }
+
+                // Usa sempre o valor REAL gravado no servidor
+                quantityElement.textContent = data.quantity;
+
+                if (itemTotalElement && data.item_total) {
+                    itemTotalElement.textContent = data.item_total + ' MZN';
+                }
+
+                if (data.cart_total) {
+                    document.getElementById('cartSubtotal').textContent = data.cart_total + ' MZN';
+                    document.getElementById('cartTotal').textContent = data.cart_total + ' MZN';
+                }
+
+                showNotification('Quantidade atualizada!', 'success');
+
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                showNotification('Erro ao atualizar quantidade', 'error');
+                quantityElement.textContent = currentQuantity;
+                if (itemTotalElement) itemTotalElement.textContent = '';
+            }
+        }
+
+        async function removeItem(itemId) {
+            if (!confirm('Tem certeza que deseja remover este item do carrinho?')) return;
+
+            try {
+                const response = await fetch(REMOVE_URL.replace("__ID__", itemId), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${text.slice(0, 200)}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'Erro ao remover item', 'error');
+                }
+
+            } catch (error) {
+                console.error('Error removing item:', error);
+                showNotification('Erro ao remover item', 'error');
+            }
+        }
+
+        function clearCart() {
+            if (!confirm('Tem certeza que deseja limpar todo o carrinho?')) return;
+            document.getElementById('clearCartForm').submit();
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-2xl border ${
+                type === 'success' ? 'border-green-500/30 bg-green-500/10 text-green-300' :
+                type === 'error' ? 'border-red-500/30 bg-red-500/10 text-red-300' :
+                'border-blue-500/30 bg-blue-500/10 text-blue-300'
+            } font-monoish text-sm animate-in slide-in-from-right-5 duration-300`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+{% endblock %}

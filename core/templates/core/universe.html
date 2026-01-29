@@ -1,0 +1,316 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+
+        <!-- HERO / INTRO -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start lg:items-center pt-6">
+            <div class="lg:col-span-7">
+                <div class="kicker text-xs text-[var(--accent)]/85">Sobre</div>
+
+                <h1 class="mt-4 font-display uppercase text-5xl sm:text-6xl md:text-7xl leading-[0.9]">
+                    PLANETA é cultura<br class="hidden sm:block"/>
+                    <span class="text-white/70">em movimento.</span>
+                </h1>
+
+                <p class="mt-5 text-white/65 text-base leading-relaxed max-w-2xl">
+                    A PLANETA é uma agência criativa sediada em Maputo. Unimos criatividade, estratégia e execução
+                    para desenvolver marcas, produzir conteúdo e activar experiências culturais com impacto.
+                </p>
+
+                <div class="mt-7 flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'eventos:agenda' %}"
+                       class="rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition text-center">
+                        Ver eventos
+                    </a>
+                    <a href="{% url 'core:contacto' %}"
+                       class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
+                        Propor colaboração
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUEM SOMOS -->
+        <section class="mt-16 lg:mt-20 grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-4">
+                <div class="kicker text-xs text-[var(--accent)]/80">Quem somos</div>
+                <h2 class="mt-3 font-display uppercase text-4xl leading-[0.95]">
+                    Um ecossistema criativa
+                    <span class="block text-white/70">de Moçambique para o mundo.</span>
+                </h2>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div class="rounded-3xl border border-white/10 bg-black/20 p-6 md:p-8 leading-relaxed">
+                    <p class="text-white/70 text-base">
+                        A PLANETA é uma agência criativa sediada em Maputo, focada no desenvolvimento de marcas e
+                        direcção de marketing. Atuamos nas áreas de branding, produção de conteúdo e activações,
+                        com uma abordagem integrada e orientada para resultados.
+                    </p>
+
+                    <p class="mt-5 text-white/70 text-base">
+                        Trabalhamos com empresas e distribuidores que procuram fortalecer a sua presença no mercado,
+                        transformar produtos em marcas relevantes e estabelecer ligações consistentes com o consumidor
+                        moçambicano.
+                    </p>
+
+                    <p class="mt-5 text-white/70 text-base">
+                        Combinamos criatividade, estratégia e execução para posicionar cada cliente com impacto,
+                        clareza e diferenciação.
+                    </p>
+
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="rounded-2xl border border-white/10 bg-black/25 p-5">
+                            <div class="kicker text-[10px] text-[var(--accent)]/80">Missão</div>
+                            <p class="mt-2 text-sm text-white/65">
+                                Criar marcas e experiências com linguagem própria, consistentes, relevantes e vivas
+                                no digital e no físico.
+                            </p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-black/25 p-5">
+                            <div class="kicker text-[10px] text-[var(--accent)]/80">Visão</div>
+                            <p class="mt-2 text-sm text-white/65">
+                                Ser referência em criação cultural e estratégia de marca, elevando padrões de produção,
+                                comunicação e impacto.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- O QUE FAZEMOS -->
+        <section class="mt-16 lg:mt-20">
+            <div class="flex items-end justify-between gap-4">
+                <div>
+                    <div class="kicker text-xs text-[var(--accent)]/80">O que fazemos</div>
+                    <h2 class="mt-2 font-display uppercase text-4xl md:text-5xl leading-[0.9]">
+                        Serviços e actuações
+                    </h2>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-5">
+                <div class="md:col-span-4 rounded-3xl border border-white/10 glass noise relative overflow-hidden p-6">
+                    <div class="absolute -top-20 -right-20 h-56 w-56 rounded-full blur-3xl bg-[var(--accent)]/10"></div>
+                    <div class="kicker text-[10px] text-[var(--accent)]/80">01</div>
+                    <div class="mt-2 font-display uppercase text-2xl leading-[0.95]">Produção & Conteúdo</div>
+                    <p class="mt-3 text-sm text-white/65 leading-relaxed">
+                        Produção audiovisual, fotografia, vídeo e criação de conteúdo para campanhas digitais e
+                        tradicionais.
+                    </p>
+                    <div class="mt-4 text-[10px] kicker text-white/55">
+                        AUDIOVISUAL · CONTEÚDO · CAMPANHAS
+                    </div>
+                </div>
+
+                <div class="md:col-span-4 rounded-3xl border border-white/10 glass noise relative overflow-hidden p-6">
+                    <div class="absolute -bottom-20 -left-20 h-56 w-56 rounded-full blur-3xl bg-white/5"></div>
+                    <div class="kicker text-[10px] text-[var(--accent)]/80">02</div>
+                    <div class="mt-2 font-display uppercase text-2xl leading-[0.95]">Estratégia & Marketing</div>
+                    <p class="mt-3 text-sm text-white/65 leading-relaxed">
+                        Estratégia de comunicação, consultoria de marketing e gestão de redes sociais com foco em
+                        consistência.
+                    </p>
+                    <div class="mt-4 text-[10px] kicker text-white/55">
+                        ESTRATÉGIA · REDES · POSICIONAMENTO
+                    </div>
+                </div>
+
+                <div class="md:col-span-4 rounded-3xl border border-white/10 glass noise relative overflow-hidden p-6">
+                    <div class="kicker text-[10px] text-[var(--accent)]/80">03</div>
+                    <div class="mt-2 font-display uppercase text-2xl leading-[0.95]">Marca & Experiência</div>
+                    <p class="mt-3 text-sm text-white/65 leading-relaxed">
+                        Desenvolvimento de marcas (branding) e produção de eventos e/ou activaçōes para presença real.
+                    </p>
+                    <div class="mt-4 text-[10px] kicker text-white/55">
+                        BRANDING · EVENTOS · ACTIVAÇÕES
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRABALHOS / PROJECTOS -->
+        <section class="mt-16 lg:mt-20">
+            <div class="flex items-end justify-between gap-4">
+                <div>
+                    <div class="kicker text-xs text-[var(--accent)]/80">Trabalhos</div>
+                    <h2 class="mt-2 font-display uppercase text-4xl md:text-5xl leading-[0.9]">
+                        Alguns projectos
+                    </h2>
+                </div>
+
+                <a href="{% url 'eventos:agenda' %}"
+                   class="text-[10px] kicker text-white/60 hover:text-white transition link-u">
+                    Ver agenda
+                </a>
+            </div>
+
+            <p class="mt-4 text-white/60 text-sm max-w-3xl leading-relaxed">
+                Desenvolvemos projectos próprios e colaborações para marcas, artistas e instituições sempre com foco
+                em linguagem, consistência e impacto.
+            </p>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-5">
+                <a href="{% url 'eventos:agenda' %}" class="poster-card reveal group block md:col-span-7">
+                    <div class="relative aspect-[16/9]">
+                        <img class="absolute inset-0 w-full h-full object-cover opacity-95 group-hover:scale-[1.02] transition duration-200"
+                             src="{% static 'img/about/work-01.jpg' %}" alt="">
+                    </div>
+                    <div class="p-5 border-t border-white/10 bg-black/20">
+                        <div class="kicker text-[10px] text-[var(--accent)]/80">Evento</div>
+                        <div class="mt-2 font-display uppercase text-2xl md:text-3xl leading-[0.9]">PLANETA NIGHT</div>
+                        <div class="mt-2 font-monoish text-xs text-white/60">Maputo · Triunfo</div>
+                    </div>
+                </a>
+
+                <div class="md:col-span-5 grid grid-cols-1 gap-5">
+                    <a href="#" class="poster-card reveal group block">
+                        <div class="relative aspect-[16/10]">
+                            <img class="absolute inset-0 w-full h-full object-cover opacity-95 group-hover:scale-[1.02] transition duration-200"
+                                 src="{% static 'img/about/work-02.jpg' %}" alt="">
+                        </div>
+                        <div class="p-5 border-t border-white/10 bg-black/20">
+                            <div class="kicker text-[10px] text-[var(--accent)]/80">Conteúdo</div>
+                            <div class="mt-2 font-display uppercase text-2xl leading-[0.9]">Campanhas & Editorial</div>
+                            <div class="mt-2 font-monoish text-xs text-white/60">Foto · vídeo · design</div>
+                        </div>
+                    </a>
+
+                    <a href="#" class="poster-card reveal group block">
+                        <div class="relative aspect-[16/10]">
+                            <img class="absolute inset-0 w-full h-full object-cover opacity-95 group-hover:scale-[1.02] transition duration-200"
+                                 src="{% static 'img/about/work-03.jpg' %}" alt="">
+                        </div>
+                        <div class="p-5 border-t border-white/10 bg-black/20">
+                            <div class="kicker text-[10px] text-[var(--accent)]/80">Marca</div>
+                            <div class="mt-2 font-display uppercase text-2xl leading-[0.9]">Branding & Identidade</div>
+                            <div class="mt-2 font-monoish text-xs text-white/60">Posicionamento · linguagem</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROPÓSITO / VALORES -->
+        <section class="mt-16 lg:mt-20">
+            <div class="rounded-3xl border border-white/10 glass p-7 md:p-10 noise relative overflow-hidden">
+                <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl bg-[var(--accent)]/12"></div>
+                <div class="absolute -bottom-24 -left-24 h-72 w-72 rounded-full blur-3xl bg-white/5"></div>
+
+                <div class="kicker text-xs text-[var(--accent)]/80">Propósito</div>
+                <h2 class="mt-3 font-display uppercase text-4xl md:text-5xl leading-[0.9]">
+                    Cultura como linguagem
+                </h2>
+                <p class="mt-4 text-white/65 text-sm md:text-base max-w-3xl leading-relaxed">
+                    Acreditamos que marcas e projectos só fazem sentido quando criam ligação real com o seu tempo e com
+                    o seu público. A PLANETA existe para construir essa ponte entre ideia, execução e experiência.
+                </p>
+            </div>
+        </section>
+
+        <!-- Parceiros & Colaborações (mantive, pois já está completo) -->
+        <section class="mt-14 md:mt-20">
+            <div class="flex items-end justify-between gap-4">
+                <div>
+                    <div class="kicker text-xs text-[var(--accent)]/80">Rede</div>
+                    <h2 class="font-display uppercase text-4xl md:text-5xl leading-[0.9]">
+                        Parceiros &<br class="hidden sm:block"/> Colaborações
+                    </h2>
+                </div>
+                <a class="text-[10px] kicker text-white/60 hover:text-white transition link-u"
+                   href="{% url 'core:contacto' %}">
+                    Propor colaboração
+                </a>
+            </div>
+
+            <div class="mt-6 rounded-3xl border border-white/10 glass noise relative overflow-hidden">
+                <div class="absolute -top-28 -right-28 h-80 w-80 rounded-full blur-3xl bg-[var(--accent)]/10"></div>
+                <div class="absolute -bottom-28 -left-28 h-80 w-80 rounded-full blur-3xl bg-white/5"></div>
+
+                <div class="py-6 border-b border-white/10 overflow-hidden">
+                    <div class="partners-marquee">
+                        <div class="partners-track">
+                            <span class="partners-item">CASTLE LITE</span><span class="partners-dot">•</span>
+                            <span class="partners-item">AFRORAVE</span><span class="partners-dot">•</span>
+                            <span class="partners-item">LAYLIZZY</span><span class="partners-dot">•</span>
+                            <span class="partners-item">GLOBAL GATEWAY</span><span class="partners-dot">•</span>
+                            <span class="partners-item">FROZY</span><span class="partners-dot">•</span>
+                            <span class="partners-item">DOPEKIDZ</span><span class="partners-dot">•</span>
+                            <span class="partners-item">PLANETA FEST</span><span class="partners-dot">•</span>
+
+                            <span class="partners-item">CASTLE LITE</span><span class="partners-dot">•</span>
+                            <span class="partners-item">AFRORAVE</span><span class="partners-dot">•</span>
+                            <span class="partners-item">LAYLIZZY</span><span class="partners-dot">•</span>
+                            <span class="partners-item">GLOBAL GATEWAY</span><span class="partners-dot">•</span>
+                            <span class="partners-item">FROZY</span><span class="partners-dot">•</span>
+                            <span class="partners-item">DOPEKIDZ</span><span class="partners-dot">•</span>
+                            <span class="partners-item">PLANETA FEST</span><span class="partners-dot">•</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8">
+                    <div class="kicker text-xs text-[var(--accent)]/80">Seleção</div>
+                    <p class="mt-2 text-sm text-white/60 max-w-3xl">
+                        Marcas, artistas e colectividades que orbitam com a PLANETA — cultura aplicada e presença real.
+                    </p>
+
+                    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+                        <a class="partner-tile reveal" data-cursor="View" href="#"><img alt=""
+                                                                                        src="{% static 'img/colabs/lite.png' %}"></a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#"><img alt=""
+                                                                                        src="{% static 'img/colabs/1630578221834.png' %}"></a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#"><img alt=""
+                                                                                        src="{% static 'img/colabs/muhlavasi.png' %}"></a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#"><img alt=""
+                                                                                        src="{% static 'img/colabs/GG.png' %}"></a>
+                        <a class="partner-tile reveal" data-cursor="View" href="#"><img alt=""
+                                                                                        src="{% static 'img/colabs/frozy.png' %}"></a>
+                        <a class="reveal mt-[1.8rem]" data-cursor="View" href="#"><span
+                                class="partners-item">DOPE SOLE</span></a>
+                    </div>
+
+                    <div class="mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-[10px] kicker text-white/55">
+                        <div>PARCERIAS · SPONSORSHIP · ARTIST BRAND · PRODUÇÃO</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA FINAL -->
+        <section class="mt-16 lg:mt-20">
+            <div class="rounded-3xl border border-white/10 bg-black/20 p-7 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <div class="kicker text-xs text-[var(--accent)]/80">Colaboração</div>
+                    <div class="mt-2 font-display uppercase text-3xl md:text-4xl leading-[0.95]">
+                        Vamos criar algo com intenção.
+                    </div>
+                    <p class="mt-2 text-white/60 text-sm max-w-xl">
+                        Produção audiovisual, campanhas, branding, redes sociais, eventos e activaçōes.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+                    <a href="{% url 'core:contacto' %}"
+                       class="rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition text-center">
+                        Contactar
+                    </a>
+                    <a href="{% url 'eventos:agenda' %}"
+                       class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
+                        Ver agenda
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    {% include 'footer.html' %}
+
+{% endblock %}

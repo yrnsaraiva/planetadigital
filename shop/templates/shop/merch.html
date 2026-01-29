@@ -1,0 +1,138 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+    {% include "navbar.html" %}
+
+    <main class="max-w-6xl mx-auto px-4 pt-10 pb-16">
+
+        <!-- HERO -->
+        <section class="pt-6">
+            <div class="kicker text-xs text-[var(--accent)]/85">Merch</div>
+
+            <div class="mt-4 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                <div>
+                    <h1 class="font-display uppercase text-5xl sm:text-6xl md:text-7xl leading-[0.9]">
+                        Drops<br class="hidden sm:block">
+                        <span class="text-white/70">em órbita.</span>
+                    </h1>
+                    <p class="mt-4 text-white/65 text-base leading-relaxed max-w-2xl">
+                        Peças PLANETA, edições limitadas e presença editorial. Pagamento no levantamento.
+                    </p>
+                </div>
+
+                <!-- filtro Featured -->
+                <div class="flex gap-2">
+                    <a href="{% url 'shop:product_list' %}"
+                       class="rounded-full px-4 py-2 text-[10px] kicker border border-white/15 hover:border-white/30 transition glass
+                    {% if not request.GET.featured %} bg-white/10 {% endif %}">
+                        Tudo
+                    </a>
+                    <a href="{% url 'shop:product_list' %}?featured=1"
+                       class="rounded-full px-4 py-2 text-[10px] kicker border border-white/15 hover:border-white/30 transition glass
+                    {% if request.GET.featured %} bg-white/10 {% endif %}">
+                        Destaques
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRID -->
+        <section class="mt-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                {% for p in products %}
+                    <a href="{% url 'shop:product_detail' p.slug %}" class="poster-card reveal group block">
+                        <div class="relative aspect-[16/10]">
+
+                            {% with img=p.images.all|first %}
+                                {% if img %}
+                                    <img
+                                            class="absolute inset-0 w-full h-full object-cover opacity-95 group-hover:scale-[1.02] transition duration-200"
+                                            src="{{ img.image.url }}"
+                                            alt="{{ p.name }}"
+                                            loading="lazy"
+                                    >
+                                {% else %}
+                                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                                        <span class="text-xs text-white/50 font-monoish">Sem imagem</span>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+
+                            {# overlay mais suave para não “matar” texto da imagem #}
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-black/0"></div>
+
+                            {% if p.is_featured %}
+                                <div class="absolute top-4 left-4 rounded-full px-3 py-1 text-[10px] kicker border border-white/15 bg-black/35 text-[var(--accent)]/85">
+                                    Destaque
+                                </div>
+                            {% endif %}
+
+                            {# Caption em “barra” inferior (melhor legibilidade sem over-dark) #}
+                            <div class="absolute left-0 right-0 bottom-0 p-4 md:p-5">
+                                <div class="rounded-2xl border border-white/10 bg-black/35 backdrop-blur-sm p-4">
+                                    <div class="font-display uppercase text-xl leading-[0.95]">
+                                        {{ p.name }}
+                                    </div>
+
+                                    <div class="mt-2 flex items-center justify-between text-xs text-white/70">
+                    <span class="font-monoish">
+                      {{ p.price|floatformat:0 }} MZN
+                    </span>
+
+                                        <span class="kicker text-[10px] text-white/60 group-hover:text-white transition link-u">
+                      Abrir
+                    </span>
+                                    </div>
+
+                                    {# opcional: mostrar variantes (tamanhos) sem poluir #}
+                                    {% if p.variants.all %}
+                                        <div class="mt-2 text-[10px] kicker text-white/45">
+                                            {% for v in p.variants.all %}
+                                                {{ v.size }}{% if not forloop.last %} · {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="text-white/60 text-sm">
+                        Sem produtos no momento.
+                    </div>
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <!-- PAGINAÇÃO -->
+        {% if is_paginated %}
+            <nav class="mt-10 flex items-center justify-center gap-2 text-[10px] kicker">
+                {% if page_obj.has_previous %}
+                    <a class="rounded-full px-4 py-2 border border-white/15 hover:border-white/30 transition glass"
+                       href="?page=
+                               {{ page_obj.previous_page_number }}{% if request.GET.featured %}&featured=1{% endif %}">
+                        Anterior
+                    </a>
+                {% endif %}
+
+                <span class="px-4 py-2 text-white/50">
+          Página {{ page_obj.number }} de {{ paginator.num_pages }}
+        </span>
+
+                {% if page_obj.has_next %}
+                    <a class="rounded-full px-4 py-2 border border-white/15 hover:border-white/30 transition glass"
+                       href="?page={{ page_obj.next_page_number }}{% if request.GET.featured %}&featured=1{% endif %}">
+                        Próxima
+                    </a>
+                {% endif %}
+            </nav>
+        {% endif %}
+
+    </main>
+
+    {% include "footer.html" %}
+{% endblock %}
