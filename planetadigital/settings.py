@@ -28,6 +28,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://planeta-temp.up.railway.app',
+    'https://*.railway.app',  # Para todos os subdomínios do Railway
+]
+
+
 # Application definition
 
 INSTALLED_APPS = [
