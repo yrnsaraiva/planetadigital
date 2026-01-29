@@ -1,1 +1,1 @@
-web: gunicorn planetadigital.wsgi:application --log-file -
+web: python manage.py collectstatic --noinput && gunicorn planetadigital.wsgi:application --log-file -
