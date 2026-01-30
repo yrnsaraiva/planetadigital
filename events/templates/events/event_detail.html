@@ -61,14 +61,22 @@
                 <!-- ACTIONS ROW: Share + Status -->
                 <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-                    <!-- Share -->
-                    <button
-                            type="button"
-                            id="shareBtn"
-                            class="rounded-full px-6 py-3 bg-white text-black text-center font-bold hover:bg-white/90 transition">
-                        <span class="text-lg">⤴</span>
-                        <span class="font-monoish text-sm">Share</span>
-                    </button>
+                    <!-- Share (só para eventos futuros/activos) -->
+                    {% if not object.is_past %}
+                        <button
+                                type="button"
+                                id="shareBtn"
+                                class="rounded-full px-6 py-3 bg-white text-black text-center font-bold hover:bg-white/90 transition">
+                            <span class="text-lg">⤴</span>
+                            <span class="font-monoish text-sm">Share</span>
+                        </button>
+                    {% else %}
+                        <!-- Fallback no lugar do share: levar para agenda -->
+                        <a href="{% url 'eventos:agenda' %}"
+                           class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
+                            <span class="font-monoish text-sm">Ver próximos eventos</span>
+                        </a>
+                    {% endif %}
 
                     <!-- Status -->
                     <div class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
@@ -81,8 +89,9 @@
 
                 </div>
 
+
                 <!-- CTA (opcional) -->
-                {% if object.ticket_url %}
+                {% if object.ticket_url and not object.is_past %}
                     <a href="{{ object.ticket_url }}" target="_blank" rel="noopener"
                        class="mt-4 inline-flex w-full items-center justify-center rounded-full px-6 py-4 bg-white text-black font-bold hover:bg-white/90 transition">
                         Bilhetes / Inscrição
