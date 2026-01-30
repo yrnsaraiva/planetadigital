@@ -33,14 +33,25 @@
 <body class="antialiased font-monoish relative overflow-x-hidden">
 
 <div id="loader" style="
-  position: fixed; inset: 0; z-index: 99999;
-  background: #05060a;
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 ">
-    <video autoplay loop muted playsinline style="width: 400px; height: auto;">
-        <source src="{% static 'videos/mooman.mp4' %}" type="video/mp4">
+    <video
+            autoplay
+            loop
+            muted
+            playsinline
+            preload="auto"
+            style="width: 220px; height: auto;">
+        <source src="{% static 'videos/mooman.webm' %}" type="video/mp4">
     </video>
 </div>
+
 
 <script>
     window.addEventListener("load", function () {
