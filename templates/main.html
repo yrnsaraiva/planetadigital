@@ -33,21 +33,21 @@
 <body class="antialiased font-monoish relative overflow-x-hidden">
 
 <div id="loader" style="
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: fixed; inset: 0; z-index: 99999;
+  background:#000; display:flex; align-items:center; justify-content:center;
 ">
     <video
+            id="loaderVideo"
             autoplay
             loop
             muted
             playsinline
+            webkit-playsinline
             preload="auto"
-            style="width: 420px; height: auto;">
+            controlslist="nodownload noplaybackrate noremoteplayback"
+            disablepictureinpicture
+            style="width:220px; height:auto; display:block;"
+    >
         <source src="{% static 'videos/mooman.webm' %}" type="video/mp4">
     </video>
 </div>
@@ -57,6 +57,34 @@
     window.addEventListener("load", function () {
         document.getElementById("loader").style.display = "none";
     });
+</script>
+<script>
+    (function () {
+        const v = document.getElementById("loaderVideo");
+
+        // tenta iniciar o vídeo (iOS às vezes ignora autoplay mesmo com muted)
+        const tryPlay = () => {
+            if (!v) return;
+            v.muted = true;
+            v.playsInline = true;
+
+            const p = v.play();
+            if (p && typeof p.catch === "function") p.catch(() => {
+            });
+        };
+
+        // tenta logo no início e também após o primeiro toque
+        document.addEventListener("DOMContentLoaded", tryPlay);
+        document.addEventListener("touchstart", tryPlay, {once: true});
+
+        // esconde loader quando a página termina
+        window.addEventListener("load", () => {
+            const loader = document.getElementById("loader");
+            loader.style.transition = "opacity .35s ease";
+            loader.style.opacity = "0";
+            setTimeout(() => loader.remove(), 350);
+        });
+    })();
 </script>
 
 
