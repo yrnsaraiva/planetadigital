@@ -23,9 +23,9 @@
                 </p>
 
                 <div class="mt-7 flex flex-col sm:flex-row gap-3">
-                    <a href="{% url 'eventos:agenda' %}"
+                    <a href="#projectos-section"
                        class="rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition text-center">
-                        Ver eventos
+                        Ver Trabalhos
                     </a>
                     <a href="{% url 'core:contacto' %}"
                        class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
@@ -136,7 +136,7 @@
         </section>
 
         <!-- TRABALHOS / PROJECTOS -->
-        <section class="mt-16 lg:mt-20">
+        <section class="mt-16 lg:mt-20" id="projectos-section">
             <div class="flex items-end justify-between gap-4">
                 <div>
                     <div class="kicker text-xs text-[var(--accent)]/80">Trabalhos</div>
@@ -300,10 +300,6 @@
                     <a href="{% url 'core:contacto' %}"
                        class="rounded-full px-6 py-3 bg-white text-black font-bold hover:bg-white/90 transition text-center">
                         Contactar
-                    </a>
-                    <a href="{% url 'eventos:agenda' %}"
-                       class="rounded-full px-6 py-3 border border-white/15 hover:border-white/30 text-white/90 transition glass font-bold text-center">
-                        Ver agenda
                     </a>
                 </div>
             </div>

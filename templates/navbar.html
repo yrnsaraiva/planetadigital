@@ -13,8 +13,8 @@
             <!-- NAV DESKTOP -->
             <nav class="hidden md:flex items-center gap-6 text-[10px] kicker text-white/65">
                 <a class="hover:text-white transition" href="{% url 'eventos:agenda' %}">EVENTOS</a>
-                <a class="hover:text-white transition" href="{% url 'shop:product_list' %}">MERCH</a>
-                <a class="hover:text-white transition" href="{% url 'core:universo' %}">UNIVERSO</a>
+                <a class="hover:text-white transition" href="{% url 'shop:product_list' %}">SHOP</a>
+                <a class="hover:text-white transition" href="{% url 'core:universo' %}">SOBRE</a>
 {#                <a class="hover:text-white transition" href="#">GALERIA</a>#}
                 <a class="hover:text-white transition" href="{% url 'campaigns:list_campaigns' %}">PLANETA&HOMIES</a>
                 <a class="hover:text-white transition" href="{% url 'core:contacto' %}">CONTACTO</a>
@@ -165,7 +165,7 @@
                 <a href="{% url 'shop:product_list' %}"
                    @click="mobileMenuOpen = false"
                    class="flex items-center justify-between py-3 text-sm text-white/80 hover:text-white transition border-b border-white/5">
-                    MERCH
+                    SHOP
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
                     </svg>
@@ -174,20 +174,20 @@
                 <a href="{% url 'core:universo' %}"
                    @click="mobileMenuOpen = false"
                    class="flex items-center justify-between py-3 text-sm text-white/80 hover:text-white transition border-b border-white/5">
-                    UNIVERSO
+                    SOBRE
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
                     </svg>
                 </a>
                 
-                <a href="#"
-                   @click="mobileMenuOpen = false"
-                   class="flex items-center justify-between py-3 text-sm text-white/80 hover:text-white transition border-b border-white/5">
-                    GALERIA
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </a>
+{#                <a href="#"#}
+{#                   @click="mobileMenuOpen = false"#}
+{#                   class="flex items-center justify-between py-3 text-sm text-white/80 hover:text-white transition border-b border-white/5">#}
+{#                    GALERIA#}
+{#                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">#}
+{#                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>#}
+{#                    </svg>#}
+{#                </a>#}
                 
                 <a href="{% url 'campaigns:list_campaigns' %}"
                    @click="mobileMenuOpen = false"
