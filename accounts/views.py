@@ -66,7 +66,7 @@ class LoginView(View):
 class LogoutView(View):
     def post(self, request):
         logout(request)
-        return redirect(reverse("accounts:login"))
+        return redirect(reverse("core:index"))
 
 
 class OrderListView(LoginRequiredMixin, ListView):
