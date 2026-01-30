@@ -5,54 +5,57 @@ const qs = (s, el = document) => el.querySelector(s);
 const qsa = (s, el = document) => [...el.querySelectorAll(s)];
 
 export function getConfig() {
-  const el = qs("#site-config");
-  if (!el) return {};
-  try { return JSON.parse(el.textContent || "{}"); }
-  catch { return {}; }
+    const el = qs("#site-config");
+    if (!el) return {};
+    try {
+        return JSON.parse(el.textContent || "{}");
+    } catch {
+        return {};
+    }
 }
 
 export function money(n, cur) {
-  if (typeof n !== "number") return "";
-  const cfg = getConfig();
-  const currency = cur || cfg.currency || "MZN";
-  return `${n.toLocaleString("pt-PT")} ${currency}`;
+    if (typeof n !== "number") return "";
+    const cfg = getConfig();
+    const currency = cur || cfg.currency || "MZN";
+    return `${n.toLocaleString("pt-PT")} ${currency}`;
 }
 
 export function setYear() {
-  const y = qs("#year");
-  if (y) y.textContent = new Date().getFullYear();
+    const y = qs("#year");
+    if (y) y.textContent = new Date().getFullYear();
 }
 
 export function hydrateGlobals() {
-  const cfg = getConfig();
+    const cfg = getConfig();
 
-  const brand = qs("[data-brand]");
-  if (brand && cfg.brand) brand.textContent = cfg.brand;
+    const brand = qs("[data-brand]");
+    if (brand && cfg.brand) brand.textContent = cfg.brand;
 
-  const tag = qs("[data-tagline]");
-  if (tag && cfg.tagline) tag.textContent = cfg.tagline;
+    const tag = qs("[data-tagline]");
+    if (tag && cfg.tagline) tag.textContent = cfg.tagline;
 
-  // pickup em inputs readonly
-  qsa('[data-pickup]').forEach(el => {
-    if (cfg.pickup) el.textContent = cfg.pickup;
-  });
+    // pickup em inputs readonly
+    qsa('[data-pickup]').forEach(el => {
+        if (cfg.pickup) el.textContent = cfg.pickup;
+    });
 }
 
 /* -------------------------
    Reveal on scroll
 ------------------------- */
 export function initReveal() {
-  const els = qsa(".reveal:not(.wired)");
-  if (!els.length) return;
+    const els = qsa(".reveal:not(.wired)");
+    if (!els.length) return;
 
-  const obs = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) e.target.classList.add("is-in");
-  }, { threshold: 0.12 });
+    const obs = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) e.target.classList.add("is-in");
+    }, {threshold: 0.12});
 
-  els.forEach(el => {
-    el.classList.add("wired");
-    obs.observe(el);
-  });
+    els.forEach(el => {
+        el.classList.add("wired");
+        obs.observe(el);
+    });
 }
 
 /* -------------------------
@@ -114,19 +117,19 @@ export function initTypingPlaneta() {
    - botões thumbs: [data-thumb="..."]
 ------------------------- */
 export function initProductThumbs() {
-  const main = qs("#mainImg");
-  const thumbs = qsa("[data-thumb]");
-  if (!main || !thumbs.length) return;
+    const main = qs("#mainImg");
+    const thumbs = qsa("[data-thumb]");
+    if (!main || !thumbs.length) return;
 
-  thumbs.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const src = btn.getAttribute("data-thumb");
-      if (src) main.src = src;
+    thumbs.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const src = btn.getAttribute("data-thumb");
+            if (src) main.src = src;
 
-      thumbs.forEach(b => b.classList.remove("ring-2", "ring-white/20"));
-      btn.classList.add("ring-2", "ring-white/20");
+            thumbs.forEach(b => b.classList.remove("ring-2", "ring-white/20"));
+            btn.classList.add("ring-2", "ring-white/20");
+        });
     });
-  });
 }
 
 export function initNewsletterPopup() {
@@ -213,3 +216,4 @@ export function wireFooterNewsletterToPopup() {
         if (modalEmail) modalEmail.value = input.value.trim();
     });
 }
+
